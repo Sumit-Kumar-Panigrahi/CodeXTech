@@ -1,0 +1,116 @@
+/**
+ * CODEXTECH DESIGN SYSTEM TOKENS
+ * Core color palette: Charcoal-black backgrounds, warm orange-red gradients, metallic accents
+ */
+
+:root {
+  /* =========================================================================
+     Color Palette: Deep Charcoal & Black Backgrounds
+     ========================================================================= */
+  --color-bg-base: #060709;
+  --color-bg-primary: #0B0D11;
+  --color-bg-secondary: #12151B;
+  --color-bg-tertiary: #191E27;
+  --color-bg-card: rgba(18, 21, 27, 0.78);
+  --color-bg-card-hover: rgba(25, 30, 39, 0.88);
+  --color-bg-glass: rgba(11, 13, 17, 0.72);
+  --color-bg-elevated: #1F2430;
+
+  /* =========================================================================
+     Color Palette: Orange-Red Accent & Warm Gradients
+     ========================================================================= */
+  --color-accent-primary: #FF4E26;
+  --color-accent-hover: #FF663D;
+  --color-accent-active: #E03B14;
+  --color-accent-subtle: rgba(255, 78, 38, 0.12);
+  --color-accent-glow: rgba(255, 78, 38, 0.35);
+
+  --color-warm-amber: #FFA043;
+  --color-cyan-circuit: #26D0CE; /* Matches the circuit highlight in CODEXTECH logo */
+  --color-cyan-glow: rgba(38, 208, 206, 0.28);
+
+  /* Gradients */
+  --gradient-accent: linear-gradient(135deg, #FF4E26 0%, #FF8533 100%);
+  --gradient-warm: linear-gradient(135deg, #FF3D14 0%, #FFA043 50%, #FF663D 100%);
+  --gradient-circuit: linear-gradient(135deg, #FF4E26 0%, #26D0CE 100%);
+  --gradient-dark-glass: linear-gradient(180deg, rgba(25, 30, 39, 0.7) 0%, rgba(14, 17, 22, 0.85) 100%);
+  --gradient-card-border: linear-gradient(135deg, rgba(255, 78, 38, 0.35) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(38, 208, 206, 0.25) 100%);
+
+  /* =========================================================================
+     Typography & Text Colors
+     ========================================================================= */
+  --color-text-primary: #F3F5F7;
+  --color-text-secondary: #9BA3AF;
+  --color-text-muted: #616B7B;
+  --color-text-accent: #FF6B42;
+
+  --font-family-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Font Scales */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  --font-size-5xl: 3rem;      /* 48px */
+  --font-size-6xl: 3.75rem;   /* 60px */
+
+  /* =========================================================================
+     Borders & Dividing Lines
+     ========================================================================= */
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-medium: rgba(255, 255, 255, 0.16);
+  --color-border-accent: rgba(255, 78, 38, 0.4);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* =========================================================================
+     Elevation & Shadows
+     ========================================================================= */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.65);
+  --shadow-accent-glow: 0 0 35px rgba(255, 78, 38, 0.22);
+  --shadow-circuit-glow: 0 0 35px rgba(38, 208, 206, 0.2);
+
+  /* =========================================================================
+     Spacing Units
+     ========================================================================= */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
+
+  /* Layout Widths */
+  --container-max-width: 1240px;
+  --navbar-height: 72px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-cinematic: 700ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Responsive Breakpoints Guide (for media queries):
+     Mobile: < 640px
+     Tablet: 641px - 1024px
+     Desktop: > 1024px
+  */
+}

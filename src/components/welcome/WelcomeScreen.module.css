@@ -1,0 +1,444 @@
+/* CODEXTECH Cinematic Welcome Screen Styles */
+
+.welcomeContainer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  z-index: 1000;
+  padding: var(--space-6);
+  user-select: none;
+}
+
+/* Ambient Backlight Elements */
+.ambientGlowOrange {
+  position: absolute;
+  top: -10%;
+  left: 15%;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(255, 78, 38, 0.16) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: ambientDrift 14s infinite ease-in-out alternate;
+  z-index: 0;
+}
+
+.ambientGlowCyan {
+  position: absolute;
+  bottom: -5%;
+  right: 15%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(38, 208, 206, 0.14) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: ambientDrift 16s infinite ease-in-out alternate-reverse;
+  z-index: 0;
+}
+
+/* Subtle Grid Texture */
+.gridTexture {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top Navigation & Status Bar */
+.topBar {
+  width: 100%;
+  max-width: var(--container-max-width);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  position: relative;
+}
+
+.brandPill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 14px;
+  background: rgba(18, 21, 27, 0.85);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.brandDot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--color-accent-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--color-accent-primary);
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.controlsGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.controlButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(22, 27, 34, 0.8);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.controlButton:hover,
+.controlButton:focus-visible {
+  background: rgba(30, 36, 46, 0.95);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-accent);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.controlButtonActive {
+  background: var(--color-accent-subtle);
+  color: var(--color-text-accent);
+  border-color: var(--color-border-accent);
+}
+
+.skipButton {
+  background: var(--gradient-accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 78, 38, 0.35);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.skipButton:hover,
+.skipButton:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 78, 38, 0.5);
+  outline: none;
+}
+
+/* Center Cinematic Stage */
+.stageWrapper {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  position: relative;
+  flex: 1;
+}
+
+/* Leader Scene Layout (Half Upper Body Presentation) */
+.leaderScene {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  max-width: 880px;
+  background: linear-gradient(135deg, rgba(18, 21, 27, 0.7) 0%, rgba(10, 12, 16, 0.85) 100%);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-8);
+  box-shadow: var(--shadow-lg), 0 0 50px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: relative;
+}
+
+.leaderScene::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 78, 38, 0.4) 0%, transparent 60%, rgba(38, 208, 206, 0.3) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Portrait Column */
+.portraitColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 260px;
+  flex-shrink: 0;
+}
+
+/* Portrait Frame — Preserving Upper Body Composition */
+.portraitFrame {
+  position: relative;
+  width: 100%;
+  height: 310px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #0B0E14;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 78, 38, 0.15);
+}
+
+.portraitImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%; /* Frames head and shoulders naturally */
+  display: block;
+}
+
+/* Ambient Edge Vignette on portrait */
+.portraitVignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 75%, rgba(11, 14, 20, 0.4) 100%);
+  pointer-events: none;
+}
+
+.portraitBadge {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(14, 17, 23, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.portraitBadgeName {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.portraitBadgeRole {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Dialogue Content Box */
+.dialogueContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.studioBrandingHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.studioLogoMini {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+  background: #000;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.studioTitle {
+  font-size: var(--font-size-lg);
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.studioTagline {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Subtitle Display Card */
+.subtitleBox {
+  background: rgba(14, 18, 25, 0.75);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.subtitleSpeakerTag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speakingIndicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-primary);
+  animation: pulseGlow 1.4s infinite ease-in-out;
+}
+
+.subtitleText {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  transition: opacity var(--transition-normal);
+}
+
+/* Autoplay Prompt Overlay (if browser blocks audio playback) */
+.userGesturePrompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 78, 38, 0.15);
+  border: 1px solid var(--color-border-accent);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  color: var(--color-text-accent);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: var(--space-2);
+  align-self: flex-start;
+  transition: all var(--transition-fast);
+}
+
+.userGesturePrompt:hover {
+  background: rgba(255, 78, 38, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Bottom Progress Track */
+.bottomTrack {
+  width: 100%;
+  max-width: var(--container-max-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  z-index: 10;
+}
+
+.cueProgressBar {
+  width: 100%;
+  max-width: 480px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.cueProgressFill {
+  height: 100%;
+  background: var(--gradient-circuit);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease-out;
+}
+
+.progressLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .welcomeContainer {
+    padding: var(--space-4);
+  }
+
+  .leaderScene {
+    flex-direction: column;
+    padding: var(--space-4);
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .portraitColumn {
+    width: 200px;
+  }
+
+  .portraitFrame {
+    width: 100%;
+    height: 240px;
+  }
+
+  .studioBrandingHeader {
+    justify-content: center;
+  }
+
+  .subtitleBox {
+    min-height: 120px;
+    text-align: left;
+  }
+
+  .subtitleText {
+    font-size: var(--font-size-sm);
+  }
+
+  .controlsGroup {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .ambientGlowOrange,
+  .ambientGlowCyan,
+  .brandDot,
+  .speakingIndicator {
+    animation: none !important;
+  }
+}

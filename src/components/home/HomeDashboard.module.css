@@ -1,0 +1,499 @@
+/* CODEXTECH Home Dashboard Styles */
+
+.dashboardWrapper {
+  min-height: 100vh;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  position: relative;
+  overflow-x: hidden;
+  padding-top: var(--navbar-height);
+}
+
+/* =========================================================================
+   Hero Section
+   ========================================================================= */
+.heroSection {
+  min-height: calc(88vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: var(--space-12) 0 var(--space-16);
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: var(--space-12);
+  width: 100%;
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  z-index: 10;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 14px;
+  background: var(--color-accent-subtle);
+  border: 1px solid var(--color-border-accent);
+  border-radius: var(--radius-full);
+  color: var(--color-text-accent);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-family: var(--font-family-display);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  background: linear-gradient(180deg, #FFFFFF 20%, #E2E8F0 70%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroTitleAccent {
+  background: var(--gradient-warm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroDescription {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 580px;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.btnPrimary {
+  background: var(--gradient-accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(255, 78, 38, 0.35);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  text-decoration: none;
+}
+
+.btnPrimary:hover,
+.btnPrimary:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255, 78, 38, 0.55);
+  outline: none;
+}
+
+.btnSecondary {
+  background: rgba(22, 27, 34, 0.75);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btnSecondary:hover,
+.btnSecondary:focus-visible {
+  background: rgba(30, 36, 46, 0.9);
+  border-color: var(--color-border-accent);
+  color: #FFFFFF;
+  outline: none;
+  transform: translateY(-2px);
+}
+
+/* Hero Visual Card */
+.heroVisualCard {
+  background: linear-gradient(145deg, rgba(22, 26, 35, 0.8) 0%, rgba(12, 14, 19, 0.95) 100%);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg), 0 0 50px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  z-index: 10;
+}
+
+.heroVisualCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-circuit);
+}
+
+.cardEmblemWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.cardLogo {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  background: #000;
+  border: 1px solid var(--color-border-medium);
+  box-shadow: 0 0 25px rgba(38, 208, 206, 0.3);
+}
+
+.leaderPill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(16, 20, 27, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+}
+
+.leaderThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 1px solid var(--color-accent-primary);
+}
+
+/* =========================================================================
+   Metrics Section
+   ========================================================================= */
+.metricsSection {
+  padding: var(--space-8) 0 var(--space-16);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+}
+
+.metricCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-accent);
+}
+
+.metricValue {
+  font-size: clamp(1.5rem, 2vw, var(--font-size-4xl));
+  font-family: var(--font-family-display);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+  margin-bottom: var(--space-2);
+  white-space: nowrap;
+}
+
+.metricLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.metricHelper {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* =========================================================================
+   Section Header Utility
+   ========================================================================= */
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-10);
+}
+
+.sectionTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-primary);
+  font-weight: 600;
+}
+
+.sectionTitle {
+  font-size: clamp(1.875rem, 3.5vw, 2.5rem);
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.sectionDesc {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  max-width: 620px;
+}
+
+/* =========================================================================
+   Projects Preview
+   ========================================================================= */
+.projectsSection {
+  padding: var(--space-16) 0;
+}
+
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.projectCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.projectCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-border-accent);
+}
+
+.projectCard.placeholder {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.projectThumbWrap {
+  width: 100%;
+  height: 180px;
+  background: #080A0E;
+  position: relative;
+  overflow: hidden;
+}
+
+.projectThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.projectBody {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.projectTag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent-primary);
+  font-weight: 600;
+}
+
+.projectTitle {
+  font-size: var(--font-size-lg);
+  font-family: var(--font-family-display);
+  color: var(--color-text-primary);
+}
+
+.projectDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.projectTechs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--space-2);
+}
+
+.techBadge {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+}
+
+/* =========================================================================
+   Team Preview
+   ========================================================================= */
+.teamSection {
+  padding: var(--space-16) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.teamMemberCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.teamMemberCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-accent);
+}
+
+.teamMemberCard.leader {
+  border-color: rgba(255, 78, 38, 0.35);
+  background: linear-gradient(135deg, rgba(255, 78, 38, 0.06) 0%, rgba(18, 21, 27, 0.8) 100%);
+}
+
+.memberPhoto {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--color-border-medium);
+  flex-shrink: 0;
+}
+
+.memberMeta h4 {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.memberMeta span {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-primary);
+  font-weight: 500;
+}
+
+/* =========================================================================
+   Journey Preview
+   ========================================================================= */
+.journeySection {
+  padding: var(--space-16) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 800px;
+}
+
+.timelineCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.timelineYear {
+  font-size: var(--font-size-xl);
+  font-family: var(--font-family-display);
+  font-weight: 800;
+  color: var(--color-accent-primary);
+  white-space: nowrap;
+}
+
+/* =========================================================================
+   Responsive Breakpoints
+   ========================================================================= */
+@media (max-width: 1024px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .projectsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .teamGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .projectsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .teamGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .timelineCard {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}

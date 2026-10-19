@@ -1,0 +1,319 @@
+/* CODEXTECH Cinematic Kinetic Core */
+
+.coreContainer {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  user-select: none;
+}
+
+.parallaxStage {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform 0.12s ease-out;
+}
+
+/* Ambient Radial Flare */
+.ambientCoreGlow {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 78, 38, 0.22) 0%, rgba(38, 208, 206, 0.08) 45%, transparent 70%);
+  filter: blur(35px);
+  pointer-events: none;
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
+/* Orbit Ring 1: Outer Orange Track */
+.orbitRingOuter {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 78, 38, 0.35);
+  box-shadow: 0 0 25px rgba(255, 78, 38, 0.15), inset 0 0 20px rgba(255, 78, 38, 0.05);
+  animation: rotateClockwise 26s linear infinite;
+  pointer-events: none;
+}
+
+/* Orbit Ring 2: Middle Cyan Track */
+.orbitRingMiddle {
+  position: absolute;
+  width: 270px;
+  height: 270px;
+  border-radius: 50%;
+  border: 1px dotted rgba(38, 208, 206, 0.5);
+  box-shadow: 0 0 20px rgba(38, 208, 206, 0.2);
+  animation: rotateCounterClockwise 18s linear infinite;
+  pointer-events: none;
+}
+
+/* Orbit Ring 3: Inner Solid Reticle */
+.orbitRingInner {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top-color: var(--color-accent-primary);
+  border-bottom-color: var(--color-cyan-circuit);
+  animation: rotateClockwise 12s linear infinite;
+  pointer-events: none;
+}
+
+/* Orbiting Glowing Energy Nodes */
+.orbitNode {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbitNodeOrange {
+  top: 0;
+  left: 50%;
+  background: var(--color-accent-primary);
+  box-shadow: 0 0 14px var(--color-accent-primary), 0 0 28px rgba(255, 78, 38, 0.8);
+}
+
+.orbitNodeOrangeOpposite {
+  bottom: -4px;
+  left: 50%;
+  background: var(--color-warm-amber);
+  box-shadow: 0 0 12px var(--color-warm-amber);
+}
+
+.orbitNodeCyan {
+  top: 50%;
+  right: -5px;
+  background: var(--color-cyan-circuit);
+  box-shadow: 0 0 14px var(--color-cyan-circuit), 0 0 25px rgba(38, 208, 206, 0.8);
+}
+
+.orbitNodeWhite {
+  bottom: 0;
+  left: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 10px #FFFFFF;
+}
+
+/* Subtle Radar Crosshairs */
+.crosshairs {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  pointer-events: none;
+}
+
+.crosshairs::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 78, 38, 0.25) 50%, transparent 100%);
+}
+
+.crosshairs::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(38, 208, 206, 0.25) 50%, transparent 100%);
+}
+
+/* Central Floating Emblem */
+.emblemCore {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-xl);
+  background: radial-gradient(circle, #0F1218 0%, #060709 100%);
+  border: 1px solid rgba(255, 78, 38, 0.4);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 78, 38, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 5;
+  transform: translateZ(45px);
+  animation: floatEmblem 4s ease-in-out infinite alternate;
+}
+
+.coreEmblemImg {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(38, 208, 206, 0.45));
+}
+
+.emblemGlowShield {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 78, 38, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Minimal Sleek Energy Status Pills */
+.energyPill {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(12, 15, 21, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+  z-index: 6;
+  transition: all var(--transition-fast);
+}
+
+.pillTop {
+  top: -8px;
+  transform: translateZ(35px);
+}
+
+.pillBottom {
+  bottom: -8px;
+  transform: translateZ(35px);
+}
+
+.pillPulseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-primary);
+  box-shadow: 0 0 8px var(--color-accent-primary);
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}
+
+.pillCyanDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-cyan-circuit);
+  box-shadow: 0 0 8px var(--color-cyan-circuit);
+  animation: pulseGlow 2.2s infinite ease-in-out;
+}
+
+/* Keyframes */
+@keyframes rotateClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateCounterClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes floatEmblem {
+  0% {
+    transform: translateZ(45px) translateY(0);
+  }
+  100% {
+    transform: translateZ(45px) translateY(-12px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 640px) {
+  .coreContainer {
+    min-height: 320px;
+    max-width: 100%;
+  }
+  .parallaxStage {
+    width: 280px;
+    height: 280px;
+  }
+  .ambientCoreGlow {
+    width: 280px;
+    height: 280px;
+  }
+  .orbitRingOuter {
+    width: 260px;
+    height: 260px;
+  }
+  .orbitRingMiddle {
+    width: 200px;
+    height: 200px;
+  }
+  .orbitRingInner {
+    width: 150px;
+    height: 150px;
+  }
+  .crosshairs {
+    width: 260px;
+    height: 260px;
+  }
+}
+
+@media (max-width: 360px) {
+  .coreContainer {
+    min-height: 270px;
+  }
+  .parallaxStage {
+    width: 240px;
+    height: 240px;
+  }
+  .ambientCoreGlow {
+    width: 240px;
+    height: 240px;
+  }
+  .orbitRingOuter {
+    width: 230px;
+    height: 230px;
+  }
+  .orbitRingMiddle {
+    width: 175px;
+    height: 175px;
+  }
+  .orbitRingInner {
+    width: 130px;
+    height: 130px;
+  }
+  .crosshairs {
+    width: 230px;
+    height: 230px;
+  }
+}
