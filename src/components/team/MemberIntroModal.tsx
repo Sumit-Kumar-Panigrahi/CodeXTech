@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -91,7 +92,7 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
   const hasGitHub = Boolean(member.socialLinks?.github && member.socialLinks.github.length > 0);
   const hasEmail = Boolean(member.socialLinks?.email && member.socialLinks.email.length > 0);
 
-  return (
+  return createPortal(
     <div
       className={styles.modalOverlay}
       role="dialog"
@@ -107,76 +108,66 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
       >
         {/* Top Header Bar */}
         <div className={styles.modalHeader}>
-          <div className={styles.modalHeaderLeft}>
-            {viewMode === 'profile' ? (
-              <button
-                type="button"
-                className={styles.backBtn}
-                onClick={handleClose}
-                title="Back to Team Showcase"
-                aria-label="Back to Team Showcase"
-              >
-                <ArrowLeft size={14} />
-                <span>Back to Team</span>
-              </button>
-            ) : (
-              <div className={styles.modalTag}>
-                <Sparkles size={13} />
-                <span>Spoken Voice Introduction</span>
-              </div>
-            )}
+          <div className={styles.modalTag}>
+            <Sparkles size={13} />
+            <span>
+              {viewMode === 'intro' ? 'Spoken Voice Introduction' : 'Detailed Profile'}
+            </span>
           </div>
 
           <div className={styles.headerActions}>
-            {/* Replay Button */}
-            <button
-              type="button"
-              className={styles.actionBtn}
-              onClick={handleReplayIntro}
-              title="Replay Spoken Introduction from beginning"
-              aria-label="Replay Spoken Introduction"
-            >
-              <RotateCcw size={13} />
-              <span>Replay</span>
-            </button>
-
-            {/* Sound / Mute Toggle */}
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${isMuted ? styles.actionBtnActive : ''}`}
-              onClick={toggleMute}
-              title={isMuted ? 'Unmute Voice' : 'Mute Voice'}
-              aria-label={isMuted ? 'Unmute Voice' : 'Mute Voice'}
-              aria-pressed={!isMuted}
-            >
-              {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
-              <span>{isMuted ? 'Muted' : 'Sound'}</span>
-            </button>
-
-            {/* Subtitles Toggle */}
-            <button
-              type="button"
-              className={`${styles.actionBtn} ${captionsEnabled ? styles.actionBtnActive : ''}`}
-              onClick={toggleCaptions}
-              title="Toggle Subtitles"
-              aria-label="Toggle Subtitles"
-              aria-pressed={captionsEnabled}
-            >
-              <Subtitles size={13} />
-              <span>{captionsEnabled ? 'CC On' : 'CC Off'}</span>
-            </button>
-
-            {/* Skip to Profile Button (only in intro mode) */}
+            {/* Intro Mode Audio Controls */}
             {viewMode === 'intro' && (
-              <button
-                type="button"
-                className={styles.skipBtn}
-                onClick={handleSkipIntro}
-                title="Skip to detailed profile immediately"
-              >
-                <span>Skip to Profile</span>
-                <ArrowRight size={13} />
-              </button>
+              <>
+                {/* Replay Button */}
+                <button
+                  type="button"
+                  className={styles.actionBtn}
+                  onClick={handleReplayIntro}
+                  title="Replay Spoken Introduction from beginning"
+                  aria-label="Replay Spoken Introduction"
+                >
+                  <RotateCcw size={13} />
+                  <span>Replay</span>
+                </button>
+
+                {/* Sound / Mute Toggle */}
+                <button
+                  type="button"
+                  className={`${styles.actionBtn} ${isMuted ? styles.actionBtnActive : ''}`}
+                  onClick={toggleMute}
+                  title={isMuted ? 'Unmute Voice' : 'Mute Voice'}
+                  aria-label={isMuted ? 'Unmute Voice' : 'Mute Voice'}
+                  aria-pressed={!isMuted}
+                >
+                  {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                  <span>{isMuted ? 'Muted' : 'Sound'}</span>
+                </button>
+
+                {/* Subtitles Toggle */}
+                <button
+                  type="button"
+                  className={`${styles.actionBtn} ${captionsEnabled ? styles.actionBtnActive : ''}`}
+                  onClick={toggleCaptions}
+                  title="Toggle Subtitles"
+                  aria-label="Toggle Subtitles"
+                  aria-pressed={captionsEnabled}
+                >
+                  <Subtitles size={13} />
+                  <span>{captionsEnabled ? 'CC On' : 'CC Off'}</span>
+                </button>
+
+                {/* Skip to Profile Button */}
+                <button
+                  type="button"
+                  className={styles.skipBtn}
+                  onClick={handleSkipIntro}
+                  title="Skip to detailed profile immediately"
+                >
+                  <span>Skip to Profile</span>
+                  <ArrowRight size={13} />
+                </button>
+              </>
             )}
 
             {/* Close Button */}
@@ -437,23 +428,11 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                   </div>
                 </div>
               )}
-
-              {/* Bottom Quick Return Button */}
-              <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 'var(--space-2)' }}>
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className={styles.backBtn}
-                  style={{ padding: '8px 24px', fontSize: '13px' }}
-                >
-                  <ArrowLeft size={15} />
-                  <span>Back to Team Showcase</span>
-                </button>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };

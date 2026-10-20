@@ -5,10 +5,10 @@
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(4, 5, 8, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: 1000;
+  background: rgba(4, 5, 8, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 99999; /* Absolute highest stacking order, well above navbar (500) */
   display: flex;
   align-items: center;
   justify-content: center;

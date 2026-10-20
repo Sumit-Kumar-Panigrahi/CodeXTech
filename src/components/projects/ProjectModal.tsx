@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -74,7 +75,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
   const hasRepoUrl = Boolean(project.repoUrl && project.repoUrl.trim().length > 0);
   const cleanDomain = `${project.id}.codextech.internal`;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <div
         className={styles.modalOverlay}
@@ -285,6 +286,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
