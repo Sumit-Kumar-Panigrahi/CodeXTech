@@ -56,6 +56,12 @@ export const TeamCard: React.FC<TeamCardProps> = ({ member, onSelect }) => {
           className={styles.photo}
           style={{ objectPosition: getImagePosition(member.id) }}
           loading="lazy"
+          onError={(e) => {
+            const target = e.currentTarget;
+            if (!target.src.endsWith('/assets/team/placeholder.svg')) {
+              target.src = '/assets/team/placeholder.svg';
+            }
+          }}
         />
         {/* Subtle fade ONLY at the very bottom edge */}
         <div className={styles.photoBottomEdgeFade} />

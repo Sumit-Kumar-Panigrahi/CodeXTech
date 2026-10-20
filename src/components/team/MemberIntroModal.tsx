@@ -7,6 +7,7 @@ import {
   Subtitles,
   RotateCcw,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   Sparkles,
   ExternalLink,
@@ -106,11 +107,24 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
       >
         {/* Top Header Bar */}
         <div className={styles.modalHeader}>
-          <div className={styles.modalTag}>
-            <Sparkles size={13} />
-            <span>
-              {viewMode === 'intro' ? 'Spoken Voice Introduction' : 'Detailed Profile'}
-            </span>
+          <div className={styles.modalHeaderLeft}>
+            {viewMode === 'profile' ? (
+              <button
+                type="button"
+                className={styles.backBtn}
+                onClick={handleClose}
+                title="Back to Team Showcase"
+                aria-label="Back to Team Showcase"
+              >
+                <ArrowLeft size={14} />
+                <span>Back to Team</span>
+              </button>
+            ) : (
+              <div className={styles.modalTag}>
+                <Sparkles size={13} />
+                <span>Spoken Voice Introduction</span>
+              </div>
+            )}
           </div>
 
           <div className={styles.headerActions}>
@@ -173,7 +187,8 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
               title="Close modal and return to team roster"
               aria-label="Close modal and return to team roster"
             >
-              <X size={18} />
+              <X size={15} />
+              <span>Close</span>
             </button>
           </div>
         </div>
@@ -195,6 +210,12 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                   src={member.photoUrl}
                   alt={member.name}
                   className={styles.introPortrait}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.endsWith('/assets/team/placeholder.svg')) {
+                      target.src = '/assets/team/placeholder.svg';
+                    }
+                  }}
                 />
               </div>
 
@@ -275,6 +296,12 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                   src={member.photoUrl}
                   alt={member.name}
                   className={styles.profileHeroPhoto}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.endsWith('/assets/team/placeholder.svg')) {
+                      target.src = '/assets/team/placeholder.svg';
+                    }
+                  }}
                 />
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -305,15 +332,25 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                   <div className={styles.profileRole}>{member.role}</div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleReplayIntro}
-                  className={styles.actionBtn}
-                  style={{ alignSelf: 'flex-start' }}
-                >
-                  <RotateCcw size={12} />
-                  <span>Replay Voice Intro</span>
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'flex-start', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className={styles.backBtn}
+                    title="Return to Team Roster"
+                  >
+                    <ArrowLeft size={13} />
+                    <span>Back to Team</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleReplayIntro}
+                    className={styles.actionBtn}
+                  >
+                    <RotateCcw size={12} />
+                    <span>Replay Voice Intro</span>
+                  </button>
+                </div>
               </div>
 
               {/* Bio & Philosophy */}
@@ -371,8 +408,9 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                       <a
                         href={member.socialLinks.linkedin}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className={styles.socialLinkBtn}
+                        aria-label={`${member.name}'s official LinkedIn profile (opens in new tab)`}
                       >
                         LinkedIn <ExternalLink size={11} />
                       </a>
@@ -381,8 +419,9 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                       <a
                         href={member.socialLinks.github}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className={styles.socialLinkBtn}
+                        aria-label={`${member.name}'s GitHub profile (opens in new tab)`}
                       >
                         GitHub <ExternalLink size={11} />
                       </a>
@@ -398,6 +437,19 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
                   </div>
                 </div>
               )}
+
+              {/* Bottom Quick Return Button */}
+              <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 'var(--space-2)' }}>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className={styles.backBtn}
+                  style={{ padding: '8px 24px', fontSize: '13px' }}
+                >
+                  <ArrowLeft size={15} />
+                  <span>Back to Team Showcase</span>
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

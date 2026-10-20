@@ -71,7 +71,7 @@ export const TeamPreview: React.FC = () => {
         >
           <Sparkles size={15} color="var(--color-accent-primary)" />
           <span>
-            Detailed individual profile pages, editable bios, and social connections will be implemented in dedicated Step 6.
+            Click on any team member card in the showcase to experience their interactive spoken voice introduction and full profile.
           </span>
         </div>
       </div>

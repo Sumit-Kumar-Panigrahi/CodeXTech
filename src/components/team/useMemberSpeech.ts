@@ -67,20 +67,29 @@ export function useMemberSpeech({
     const voices = window.speechSynthesis.getVoices();
     if (!voices || voices.length === 0) return null;
 
-    const femaleKeywords = ['heera', 'neerja', 'hazel', 'susan', 'zira', 'jenny', 'aria', 'sonia', 'female', 'woman'];
-    const maleKeywords = ['ravi', 'george', 'david', 'mark', 'guy', 'male', 'man'];
+    const femaleKeywords = ['heera', 'neerja', 'veena', 'anjali', 'kalpana', 'hazel', 'susan', 'zira', 'jenny', 'aria', 'sonia', 'female', 'woman'];
+    const maleKeywords = ['ravi', 'prabhat', 'madhav', 'george', 'david', 'mark', 'guy', 'male', 'man', 'james', 'richard', 'oliver'];
 
     const targetKeywords = targetGender === 'female' ? femaleKeywords : maleKeywords;
+    const oppositeKeywords = targetGender === 'female' ? maleKeywords : femaleKeywords;
 
-    // 1. Indian English (en-IN) matching target gender
-    const indianMatch = voices.find(
+    // 1. Indian English (en-IN) matching target gender keywords
+    const indianExactMatch = voices.find(
       (v) =>
         (v.lang === 'en-IN' || v.lang.toLowerCase().startsWith('en-in') || v.name.toLowerCase().includes('india')) &&
         targetKeywords.some((kw) => v.name.toLowerCase().includes(kw))
     );
-    if (indianMatch) return indianMatch;
+    if (indianExactMatch) return indianExactMatch;
 
-    // 2. British English (en-GB) matching target gender
+    // 2. Indian English (en-IN) that does NOT conflict with the opposite gender
+    const indianGenericMatch = voices.find(
+      (v) =>
+        (v.lang === 'en-IN' || v.lang.toLowerCase().startsWith('en-in') || v.name.toLowerCase().includes('india')) &&
+        !oppositeKeywords.some((kw) => v.name.toLowerCase().includes(kw))
+    );
+    if (indianGenericMatch) return indianGenericMatch;
+
+    // 3. British English (en-GB) matching target gender
     const britishMatch = voices.find(
       (v) =>
         (v.lang === 'en-GB' || v.lang.toLowerCase().startsWith('en-gb')) &&
@@ -88,7 +97,7 @@ export function useMemberSpeech({
     );
     if (britishMatch) return britishMatch;
 
-    // 3. US English matching target gender (e.g. David for male, Zira for female)
+    // 4. US English matching target gender (e.g. David for male, Zira for female)
     const usMatch = voices.find(
       (v) =>
         (v.lang.startsWith('en') || v.lang === 'en-US') &&
@@ -96,13 +105,13 @@ export function useMemberSpeech({
     );
     if (usMatch) return usMatch;
 
-    // 4. Any English voice matching target gender
+    // 5. Any English voice matching target gender
     const anyGenderMatch = voices.find(
       (v) => v.lang.startsWith('en') && targetKeywords.some((kw) => v.name.toLowerCase().includes(kw))
     );
     if (anyGenderMatch) return anyGenderMatch;
 
-    // 5. Fallback to any high-quality English voice if gender voice is unavailable
+    // 6. Fallback to any high-quality English voice if gender voice is unavailable
     const anyEnglish = voices.find((v) => v.lang.startsWith('en'));
     if (anyEnglish) return anyEnglish;
 
@@ -145,8 +154,8 @@ export function useMemberSpeech({
           setSelectedVoiceInfo(`${voice.name} (${gender.toUpperCase()})`);
         }
 
-        // Natural, measured speaking cadence
-        utterance.rate = 0.90;
+        // Natural, clear, and confident speaking cadence
+        utterance.rate = 1.0;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
 
@@ -154,12 +163,12 @@ export function useMemberSpeech({
         const advanceToNext = () => {
           if (sentenceEnded || isCanceledRef.current) return;
           sentenceEnded = true;
-          // Natural breathing pause between sentences
+          // Clean, natural pause between sentences
           timerRef.current = setTimeout(() => {
             if (!isCanceledRef.current && isPlayingRef.current) {
               speakSentence(index + 1);
             }
-          }, 320);
+          }, 200);
         };
 
         utterance.onend = () => {

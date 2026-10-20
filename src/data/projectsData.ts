@@ -26,7 +26,7 @@ export const projectsData: Project[] = [
     description:
       'An intelligent cybersecurity and threat analysis platform designed to connect attack chains, predict threats, and protect users through personal zero-trust defense and real-time security signals.',
     category: 'Cybersecurity & AI Defence',
-    status: 'Phase 5 Live Sandbox',
+    status: 'Live Production Sandbox',
     technologies: [
       'AI Security Assistant',
       'Zero-Trust Architecture',
@@ -57,7 +57,7 @@ export const projectsData: Project[] = [
     description:
       'A gamified productivity and habit-tracking dashboard that transforms everyday routines and personal goals into an epic role-playing quest with XP progression and character leveling.',
     category: 'Gamified Productivity',
-    status: 'Season 1 Active',
+    status: 'Live Gamified Platform',
     technologies: [
       'Quest Engine',
       'XP Progression System',

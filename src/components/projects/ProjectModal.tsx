@@ -279,18 +279,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                       </span>
                     </div>
                   )}
-
-                  {/* Obvious Bottom Return to Projects Button */}
-                  <button
-                    type="button"
-                    className={styles.btnSecondaryLink}
-                    onClick={onClose}
-                    style={{ cursor: 'pointer', border: '1px solid rgba(255, 255, 255, 0.16)' }}
-                    aria-label="Return to Projects Showcase"
-                  >
-                    <ArrowLeft size={14} />
-                    <span>Back to Projects Showcase</span>
-                  </button>
                 </div>
               </div>
             </div>

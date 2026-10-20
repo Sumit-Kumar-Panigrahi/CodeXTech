@@ -14,7 +14,7 @@ export const FeaturedProjectsPreview: React.FC = () => {
           </div>
           <h2 className={styles.sectionTitle}>Featured Projects Showcase</h2>
           <p className={styles.sectionDesc}>
-            A curated glimpse of our digital builds and technical explorations. Full case studies and live demos will be expanded in Step 7.
+            A curated glimpse of our digital builds, production architectures, and technical explorations.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export const FeaturedProjectsPreview: React.FC = () => {
         >
           <Layers size={15} color="var(--color-cyan-circuit)" />
           <span>
-            Project details, filterable categories, and interactive modals will be fully integrated during Step 7.
+            Explore project architectures, system capabilities, and live interfaces directly in the showcase.
           </span>
         </div>
       </div>

@@ -32,6 +32,12 @@ export const LeaderScene: React.FC<LeaderSceneProps> = ({
             alt={leaderIntro.speakerName}
             className={styles.portraitImage}
             loading="eager"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.endsWith('/assets/team/placeholder.svg')) {
+                target.src = '/assets/team/placeholder.svg';
+              }
+            }}
           />
           <div className={styles.portraitVignette} />
         </div>
