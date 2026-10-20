@@ -5,7 +5,7 @@ interface UseMemberSpeechOptions {
   gender: 'male' | 'female';
   audioUrl?: string;
   subtitles: string[];
-  spokenTexts: string[];
+  spokenTexts?: string[];
   onNarrationComplete: () => void;
   autoPlay?: boolean;
 }
@@ -64,24 +64,27 @@ export function useMemberSpeech({
 
   const resolvedAudioSrc = audioUrl || MEMBER_AUDIO_MAP[memberId] || `/assets/audio/team/${memberId}.mp3`;
 
-  const clearFallbackTimer = () => {
+  const clearFallbackTimer = useCallback(() => {
     if (fallbackTimerRef.current !== null) {
       window.clearTimeout(fallbackTimerRef.current);
       fallbackTimerRef.current = null;
     }
-  };
+  }, []);
 
-  // Full stop & cancel playback immediately
+  // Full stop & cancel playback immediately without triggering false onerror
   const stopAll = useCallback(() => {
     isCanceledRef.current = true;
     clearFallbackTimer();
     if (audioRef.current) {
+      audioRef.current.ontimeupdate = null;
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
     setIsPlaying(false);
     isPlayingRef.current = false;
-  }, []);
+  }, [clearFallbackTimer]);
 
   // Update active subtitle sentence based on audio time
   const handleTimeUpdate = useCallback(() => {
@@ -98,7 +101,6 @@ export function useMemberSpeech({
         }
       }
     } else {
-      // Dynamic proportional distribution
       const dur = audioRef.current.duration || 8;
       const count = subtitlesRef.current.length;
       sentenceIdx = Math.min(Math.floor((currentT / dur) * count), count - 1);
@@ -139,7 +141,6 @@ export function useMemberSpeech({
       if (isCanceledRef.current) return;
       setIsPlaying(false);
       isPlayingRef.current = false;
-      // Brief pause before transitioning to profile
       window.setTimeout(() => {
         if (!isCanceledRef.current) {
           onCompleteRef.current();
@@ -166,7 +167,7 @@ export function useMemberSpeech({
     };
 
     audio.onerror = () => {
-      console.warn(`[CODEXTECH Audio] Audio not found or failed for ${memberId}, using fallback timing.`);
+      if (isCanceledRef.current || !audio.src) return;
       fallbackTimerRef.current = window.setTimeout(advanceFallback, 3500);
     };
 
@@ -189,7 +190,7 @@ export function useMemberSpeech({
           }
         });
     }
-  }, [gender, handleTimeUpdate, memberId, resolvedAudioSrc]);
+  }, [clearFallbackTimer, gender, handleTimeUpdate, memberId, resolvedAudioSrc]);
 
   // Replay complete introduction from 0.0s
   const replay = useCallback(() => {
@@ -221,26 +222,25 @@ export function useMemberSpeech({
     audio.preload = 'auto';
     audioRef.current = audio;
 
+    let initTimer: number | null = null;
     if (autoPlay) {
-      const initTimer = setTimeout(() => {
+      initTimer = window.setTimeout(() => {
         startSequence();
       }, 150);
-      return () => {
-        clearTimeout(initTimer);
-        stopAll();
-        audio.pause();
-        audio.src = '';
-        audioRef.current = null;
-      };
     }
 
     return () => {
-      stopAll();
-      audio.pause();
-      audio.src = '';
-      audioRef.current = null;
+      if (initTimer !== null) clearTimeout(initTimer);
+      if (audioRef.current) {
+        audioRef.current.ontimeupdate = null;
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      clearFallbackTimer();
     };
-  }, [resolvedAudioSrc, memberId, autoPlay, startSequence, stopAll]);
+  }, [resolvedAudioSrc, memberId, autoPlay, clearFallbackTimer, startSequence]);
 
   return {
     isPlaying,

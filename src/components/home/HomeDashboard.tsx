@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navbar } from '../layout/Navbar';
 import { Footer } from '../layout/Footer';
 import { HeroSection } from './HeroSection';
@@ -15,6 +15,31 @@ interface HomeDashboardProps {
 }
 
 export const HomeDashboard: React.FC<HomeDashboardProps> = ({ onReplayIntro }) => {
+  // Play subtle cinematic futuristic reveal sound effect once on entrance
+  useEffect(() => {
+    let sfx: HTMLAudioElement | null = new Audio('/assets/audio/dashboard-reveal.mp3');
+    sfx.preload = 'auto';
+    sfx.volume = 0.5; // Tasteful, balanced volume
+
+    // Synchronize slightly with the 120ms entrance motion
+    const timer = window.setTimeout(() => {
+      if (sfx) {
+        sfx.play().catch(() => {
+          // Handled gracefully if browser policy restricts unmuted sound
+        });
+      }
+    }, 120);
+
+    return () => {
+      window.clearTimeout(timer);
+      if (sfx) {
+        sfx.pause();
+        sfx.src = '';
+        sfx = null;
+      }
+    };
+  }, []); // Strictly once per dashboard mount
+
   return (
     <div className={styles.dashboardWrapper}>
       {/* High-Performance Interactive Particle & Constellation Background */}

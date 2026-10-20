@@ -12,12 +12,14 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
   const [captionsEnabled, setCaptionsEnabled] = useState<boolean>(true);
   const [activeCueIndex, setActiveCueIndex] = useState<number>(0);
   const [needsUserGesture, setNeedsUserGesture] = useState<boolean>(false);
-  const [isAudioLoaded, setIsAudioLoaded] = useState<boolean>(false);
 
   const cues = welcomeNarrationData.cues;
   const audioSrc = welcomeNarrationData.audioUrl;
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   const isPlayingRef = useRef<boolean>(false);
   const isMutedRef = useRef<boolean>(false);
   const isCanceledRef = useRef<boolean>(false);
@@ -27,24 +29,27 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
   isMutedRef.current = isMuted;
   isPlayingRef.current = isPlaying;
 
-  const clearFallbackTimer = () => {
+  const clearFallbackTimer = useCallback(() => {
     if (fallbackTimerRef.current !== null) {
       window.clearTimeout(fallbackTimerRef.current);
       fallbackTimerRef.current = null;
     }
-  };
+  }, []);
 
-  // Stop all audio playback cleanly
+  // Stop all audio playback cleanly without triggering false onerror events
   const stopAll = useCallback(() => {
     isCanceledRef.current = true;
     clearFallbackTimer();
     if (audioRef.current) {
+      audioRef.current.ontimeupdate = null;
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
     setIsPlaying(false);
     isPlayingRef.current = false;
-  }, []);
+  }, [clearFallbackTimer]);
 
   // Sync subtitle cues according to current audio time
   const handleTimeUpdate = useCallback(() => {
@@ -61,7 +66,7 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
     }
   }, [cues]);
 
-  // Timed fallback progression if audio is muted or blocked by browser autoplay policy
+  // Timed fallback progression if audio is blocked by browser autoplay policy
   const startFallbackProgression = useCallback(
     (fromIndex = 0) => {
       clearFallbackTimer();
@@ -80,8 +85,8 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
         } else {
           setIsPlaying(false);
           isPlayingRef.current = false;
-          if (onComplete) {
-            window.setTimeout(onComplete, 1200);
+          if (onCompleteRef.current) {
+            window.setTimeout(onCompleteRef.current, 1200);
           }
         }
       };
@@ -89,7 +94,7 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
       const initialDuration = (cues[cur].endSecond - cues[cur].startSecond) * 1000;
       fallbackTimerRef.current = window.setTimeout(step, Math.max(initialDuration, 3500));
     },
-    [cues, onComplete]
+    [clearFallbackTimer, cues]
   );
 
   // Start fixed audio playback
@@ -100,9 +105,8 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
       setNeedsUserGesture(false);
 
       if (!audioRef.current) {
-        const audio = new Audio(audioSrc);
-        audio.preload = 'auto';
-        audioRef.current = audio;
+        audioRef.current = new Audio(audioSrc);
+        audioRef.current.preload = 'auto';
       }
 
       const audio = audioRef.current;
@@ -114,7 +118,7 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
       try {
         audio.currentTime = startTime;
       } catch {
-        // Safe guard if metadata not fully loaded yet
+        // Safe guard
       }
 
       activeCueIndexRef.current = targetCue;
@@ -126,13 +130,13 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
         if (isCanceledRef.current) return;
         setIsPlaying(false);
         isPlayingRef.current = false;
-        if (onComplete) {
-          setTimeout(onComplete, 800);
+        if (onCompleteRef.current) {
+          setTimeout(onCompleteRef.current, 800);
         }
       };
 
       audio.onerror = () => {
-        console.warn('[CODEXTECH Audio] Audio file load warning, using timed cue progression.');
+        if (isCanceledRef.current || !audio.src) return;
         startFallbackProgression(activeCueIndexRef.current);
       };
 
@@ -148,7 +152,7 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
           })
           .catch((err) => {
             if (err.name === 'NotAllowedError') {
-              // Autoplay was restricted by the browser before user interaction
+              // Autoplay was restricted by browser policy before user interaction
               setNeedsUserGesture(true);
               setIsPlaying(false);
               isPlayingRef.current = false;
@@ -158,7 +162,7 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
           });
       }
     },
-    [audioSrc, cues, handleTimeUpdate, onComplete, startFallbackProgression]
+    [audioSrc, clearFallbackTimer, cues, handleTimeUpdate, startFallbackProgression]
   );
 
   // Replay complete introduction from 0.0s
@@ -185,16 +189,14 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
     setCaptionsEnabled((prev) => !prev);
   }, []);
 
-  // Preload audio asset on mount
+  // Preload and schedule start matching narration scene reveal
   useEffect(() => {
     const audio = new Audio(audioSrc);
     audio.preload = 'auto';
-    audio.oncanplaythrough = () => setIsAudioLoaded(true);
     audioRef.current = audio;
 
     let initTimer: number | null = null;
     if (autoPlay) {
-      // Start experience matching narration scene reveal
       initTimer = window.setTimeout(() => {
         startExperience(0);
       }, 2800);
@@ -202,12 +204,16 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
 
     return () => {
       if (initTimer !== null) clearTimeout(initTimer);
-      stopAll();
-      audio.pause();
-      audio.src = '';
-      audioRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.ontimeupdate = null;
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      clearFallbackTimer();
     };
-  }, [audioSrc, autoPlay, startExperience, stopAll]);
+  }, [audioSrc, autoPlay, clearFallbackTimer, startExperience]);
 
   return {
     isPlaying,
@@ -217,7 +223,6 @@ export function useSpeechNarration({ onComplete, autoPlay = true }: UseSpeechNar
     activeCueIndex,
     totalCues: cues.length,
     isSpeechSupported: true,
-    isAudioLoaded,
     needsUserGesture,
     selectedVoiceName: 'Fixed Studio Audio (Sumit — Male)',
     startExperience: () => startExperience(activeCueIndexRef.current),
