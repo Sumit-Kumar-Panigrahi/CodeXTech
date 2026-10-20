@@ -19,6 +19,7 @@ export interface WelcomeCueWithText extends WelcomeNarrationCue {
 }
 
 export const welcomeNarrationData = {
+  audioUrl: '/assets/audio/welcome-intro.mp3',
   leaderIntro: {
     speakerName: 'Sumit Kumar Panigrahi',
     speakerTitle: 'Team Leader, CODEXTECH',
@@ -50,7 +51,7 @@ export const welcomeNarrationData = {
     {
       id: 3,
       startSecond: 8.5,
-      endSecond: 16.5,
+      endSecond: 17.5,
       speaker: 'Sumit Kumar Panigrahi',
       textToSpeak:
         'We believe every great idea begins with a simple thought. When creativity, technology, and teamwork come together, that thought can become reality.',
@@ -61,8 +62,8 @@ export const welcomeNarrationData = {
     },
     {
       id: 4,
-      startSecond: 16.5,
-      endSecond: 21.0,
+      startSecond: 17.5,
+      endSecond: 22.0,
       speaker: 'Sumit Kumar Panigrahi',
       textToSpeak: "Today, we'd like to introduce our team, showcase our projects.",
       textHindiEnglish: "Today, we'd like to introduce our team, showcase our projects.",
@@ -70,8 +71,8 @@ export const welcomeNarrationData = {
     },
     {
       id: 5,
-      startSecond: 21.0,
-      endSecond: 24.5,
+      startSecond: 22.0,
+      endSecond: 25.5,
       speaker: 'Sumit Kumar Panigrahi',
       textToSpeak: "So, let's explore what we've built.",
       textHindiEnglish: "So, let's explore what we've built.",
@@ -79,8 +80,8 @@ export const welcomeNarrationData = {
     },
     {
       id: 6,
-      startSecond: 24.5,
-      endSecond: 27.5,
+      startSecond: 25.5,
+      endSecond: 30.0,
       speaker: 'Sumit Kumar Panigrahi',
       textToSpeak: 'Welcome to Code... X... Tech!',
       textHindiEnglish: 'Welcome to CodeXTech!',

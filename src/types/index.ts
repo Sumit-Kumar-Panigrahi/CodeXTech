@@ -14,6 +14,7 @@ export interface TeamMember {
   introSentences?: string[];
   spokenSentences?: string[];
   gender: 'male' | 'female';
+  audioUrl?: string;
   contributions?: string[];
   socialLinks: {
     linkedin?: string;

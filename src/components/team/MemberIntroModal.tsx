@@ -54,6 +54,7 @@ export const MemberIntroModal: React.FC<MemberIntroModalProps> = ({ member, onCl
   } = useMemberSpeech({
     memberId: member.id,
     gender: member.gender || (['supriya-panda', 'adity-kumari'].includes(member.id) ? 'female' : 'male'),
+    audioUrl: member.audioUrl,
     subtitles,
     spokenTexts,
     onNarrationComplete: () => {

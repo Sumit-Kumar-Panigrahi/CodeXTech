@@ -26,6 +26,7 @@ export const teamMembers: TeamMember[] = [
     isLeader: true,
     gender: 'male',
     photoUrl: '/assets/team/sumit-leader.jpg',
+    audioUrl: '/assets/audio/team/sumit.mp3',
     introScript:
       "Hey, I'm Sumit, Founder and Team Leader of CODEXTECH. I turn ideas into innovation and challenges into solutions. Welcome to my world!",
     introSentences: [
@@ -60,6 +61,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Business & Strategy Lead',
     gender: 'male',
     photoUrl: '/assets/team/ritesh.jpg',
+    audioUrl: '/assets/audio/team/ritesh.mp3',
     introScript:
       "Hey, I'm Ritesh, leading business and strategy at CODEXTECH. Let's turn ideas into opportunities!",
     introSentences: [
@@ -91,6 +93,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Frontend Development',
     gender: 'male',
     photoUrl: '/assets/team/priyanshu.jpg',
+    audioUrl: '/assets/audio/team/priyanshu.mp3',
     introScript:
       "Hey, I'm Priyanshu, crafting interactive digital experiences through frontend development. Welcome to my space!",
     introSentences: [
@@ -120,6 +123,7 @@ export const teamMembers: TeamMember[] = [
     role: 'AI/ML & Emerging Technologies',
     gender: 'male',
     photoUrl: '/assets/team/pranab.jpg',
+    audioUrl: '/assets/audio/team/pranab.mp3',
     introScript:
       "Hey, I'm Pranab, exploring AI, machine learning, and the technology shaping tomorrow. Let's innovate!",
     introSentences: [
@@ -150,6 +154,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Research & Technical Communication',
     gender: 'female',
     photoUrl: '/assets/team/supriya.jpg',
+    audioUrl: '/assets/audio/team/supriya.mp3',
     introScript:
       "Hey, I'm Supriya, bringing research and ideas together to create meaningful solutions. Welcome to my profile!",
     introSentences: [
@@ -180,6 +185,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Frontend Developer & Technical Communication',
     gender: 'female',
     photoUrl: '/assets/team/adity.jpg',
+    audioUrl: '/assets/audio/team/adity.mp3',
     introScript:
       "Hey, I'm Adity, building engaging web experiences and bringing ideas to life. Welcome to my profile!",
     introSentences: [
@@ -187,7 +193,7 @@ export const teamMembers: TeamMember[] = [
       "Welcome to my profile!",
     ],
     spokenSentences: [
-      "Hey, I'm Aditi, building engaging web experiences and bringing ideas to life.",
+      "Hey, I'm Aditi Kumari, building engaging web experiences and bringing ideas to life.",
       "Welcome to my profile!",
     ],
     bio: "I'm a B.Tech CSE (AI) student at Gandhi Institute for Technology, Bhubaneswar, with an interest in frontend development and creating engaging web experiences. I enjoy building responsive interfaces and using web technologies to make websites interactive, accessible, and user-friendly.\n\nMy technical interests include React, HTML, CSS, JavaScript, Bootstrap, DOM, and JSON. Alongside development, I enjoy discussing our project ideas and helping communicate our solutions during hackathons. When judges ask technical questions, I contribute to answering them by explaining our approach and helping present our ideas clearly.\n\nI'm continuously working to strengthen my development skills, improve my technical communication, and collaborate effectively with my teammates to build better digital experiences.",

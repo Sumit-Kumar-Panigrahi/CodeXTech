@@ -3,17 +3,39 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 interface UseMemberSpeechOptions {
   memberId: string;
   gender: 'male' | 'female';
+  audioUrl?: string;
   subtitles: string[];
   spokenTexts: string[];
   onNarrationComplete: () => void;
   autoPlay?: boolean;
 }
 
+// Fixed audio mapping for each team member
+const MEMBER_AUDIO_MAP: Record<string, string> = {
+  'sumit-kumar-panigrahi': '/assets/audio/team/sumit.mp3',
+  'siriparapu-ritesh-kumar': '/assets/audio/team/ritesh.mp3',
+  'priyanshu-behura': '/assets/audio/team/priyanshu.mp3',
+  'pranab-kumar-jena': '/assets/audio/team/pranab.mp3',
+  'supriya-panda': '/assets/audio/team/supriya.mp3',
+  'adity-kumari': '/assets/audio/team/adity.mp3',
+};
+
+// Sentence split boundary timestamps (in seconds) for each member's narration
+const MEMBER_SENTENCE_TIMINGS: Record<string, number[]> = {
+  'sumit-kumar-panigrahi': [0, 5.2, 9.2],
+  'siriparapu-ritesh-kumar': [0, 5.2],
+  'priyanshu-behura': [0, 6.2],
+  'pranab-kumar-jena': [0, 6.2],
+  'supriya-panda': [0, 5.8],
+  'adity-kumari': [0, 6.0],
+};
+
 export function useMemberSpeech({
   memberId,
   gender,
+  audioUrl,
   subtitles,
-  spokenTexts,
+  spokenTexts: _spokenTexts,
   onNarrationComplete,
   autoPlay = true,
 }: UseMemberSpeechOptions) {
@@ -24,207 +46,152 @@ export function useMemberSpeech({
   const [needsUserGesture, setNeedsUserGesture] = useState<boolean>(false);
   const [selectedVoiceInfo, setSelectedVoiceInfo] = useState<string>('');
 
-  // Persist callbacks and lists in refs to prevent unnecessary re-render invalidation
   const onCompleteRef = useRef(onNarrationComplete);
   onCompleteRef.current = onNarrationComplete;
 
   const subtitlesRef = useRef(subtitles);
   subtitlesRef.current = subtitles;
 
-  const spokenTextsRef = useRef(spokenTexts);
-  spokenTextsRef.current = spokenTexts;
-
   const activeIndexRef = useRef<number>(0);
   const isPlayingRef = useRef<boolean>(false);
   const isMutedRef = useRef<boolean>(false);
   const isCanceledRef = useRef<boolean>(false);
-  const timerRef = useRef<number | null>(null);
+  const fallbackTimerRef = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   isMutedRef.current = isMuted;
   isPlayingRef.current = isPlaying;
 
-  const clearTimer = () => {
-    if (timerRef.current !== null) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
+  const resolvedAudioSrc = audioUrl || MEMBER_AUDIO_MAP[memberId] || `/assets/audio/team/${memberId}.mp3`;
+
+  const clearFallbackTimer = () => {
+    if (fallbackTimerRef.current !== null) {
+      window.clearTimeout(fallbackTimerRef.current);
+      fallbackTimerRef.current = null;
     }
   };
 
-  // Full stop & cancel
+  // Full stop & cancel playback immediately
   const stopAll = useCallback(() => {
     isCanceledRef.current = true;
-    clearTimer();
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    clearFallbackTimer();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
     setIsPlaying(false);
     isPlayingRef.current = false;
   }, []);
 
-  // Gender-aware voice resolver
-  const getGenderVoice = useCallback((targetGender: 'male' | 'female'): SpeechSynthesisVoice | null => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
-    const voices = window.speechSynthesis.getVoices();
-    if (!voices || voices.length === 0) return null;
+  // Update active subtitle sentence based on audio time
+  const handleTimeUpdate = useCallback(() => {
+    if (!audioRef.current || isCanceledRef.current) return;
+    const currentT = audioRef.current.currentTime;
+    const timings = MEMBER_SENTENCE_TIMINGS[memberId];
 
-    const femaleKeywords = ['heera', 'neerja', 'veena', 'anjali', 'kalpana', 'hazel', 'susan', 'zira', 'jenny', 'aria', 'sonia', 'female', 'woman'];
-    const maleKeywords = ['ravi', 'prabhat', 'madhav', 'george', 'david', 'mark', 'guy', 'male', 'man', 'james', 'richard', 'oliver'];
+    let sentenceIdx = 0;
+    if (timings && timings.length > 0) {
+      for (let i = timings.length - 1; i >= 0; i--) {
+        if (currentT >= timings[i]) {
+          sentenceIdx = i;
+          break;
+        }
+      }
+    } else {
+      // Dynamic proportional distribution
+      const dur = audioRef.current.duration || 8;
+      const count = subtitlesRef.current.length;
+      sentenceIdx = Math.min(Math.floor((currentT / dur) * count), count - 1);
+    }
 
-    const targetKeywords = targetGender === 'female' ? femaleKeywords : maleKeywords;
-    const oppositeKeywords = targetGender === 'female' ? maleKeywords : femaleKeywords;
+    if (sentenceIdx !== activeIndexRef.current) {
+      activeIndexRef.current = sentenceIdx;
+      setActiveSentenceIndex(sentenceIdx);
+    }
+  }, [memberId]);
 
-    // 1. Indian English (en-IN) matching target gender keywords
-    const indianExactMatch = voices.find(
-      (v) =>
-        (v.lang === 'en-IN' || v.lang.toLowerCase().startsWith('en-in') || v.name.toLowerCase().includes('india')) &&
-        targetKeywords.some((kw) => v.name.toLowerCase().includes(kw))
+  // Start fixed audio playback
+  const startSequence = useCallback(() => {
+    isCanceledRef.current = false;
+    clearFallbackTimer();
+    setNeedsUserGesture(false);
+
+    if (!audioRef.current) {
+      const audio = new Audio(resolvedAudioSrc);
+      audio.preload = 'auto';
+      audioRef.current = audio;
+    }
+
+    const audio = audioRef.current;
+    audio.src = resolvedAudioSrc;
+    audio.muted = isMutedRef.current;
+    audio.currentTime = 0;
+    activeIndexRef.current = 0;
+    setActiveSentenceIndex(0);
+
+    setSelectedVoiceInfo(
+      gender === 'female' ? 'Fixed Studio Audio (Female)' : 'Fixed Studio Audio (Male)'
     );
-    if (indianExactMatch) return indianExactMatch;
 
-    // 2. Indian English (en-IN) that does NOT conflict with the opposite gender
-    const indianGenericMatch = voices.find(
-      (v) =>
-        (v.lang === 'en-IN' || v.lang.toLowerCase().startsWith('en-in') || v.name.toLowerCase().includes('india')) &&
-        !oppositeKeywords.some((kw) => v.name.toLowerCase().includes(kw))
-    );
-    if (indianGenericMatch) return indianGenericMatch;
+    audio.ontimeupdate = handleTimeUpdate;
 
-    // 3. British English (en-GB) matching target gender
-    const britishMatch = voices.find(
-      (v) =>
-        (v.lang === 'en-GB' || v.lang.toLowerCase().startsWith('en-gb')) &&
-        targetKeywords.some((kw) => v.name.toLowerCase().includes(kw))
-    );
-    if (britishMatch) return britishMatch;
+    audio.onended = () => {
+      if (isCanceledRef.current) return;
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      // Brief pause before transitioning to profile
+      window.setTimeout(() => {
+        if (!isCanceledRef.current) {
+          onCompleteRef.current();
+        }
+      }, 500);
+    };
 
-    // 4. US English matching target gender (e.g. David for male, Zira for female)
-    const usMatch = voices.find(
-      (v) =>
-        (v.lang.startsWith('en') || v.lang === 'en-US') &&
-        targetKeywords.some((kw) => v.name.toLowerCase().includes(kw))
-    );
-    if (usMatch) return usMatch;
-
-    // 5. Any English voice matching target gender
-    const anyGenderMatch = voices.find(
-      (v) => v.lang.startsWith('en') && targetKeywords.some((kw) => v.name.toLowerCase().includes(kw))
-    );
-    if (anyGenderMatch) return anyGenderMatch;
-
-    // 6. Fallback to any high-quality English voice if gender voice is unavailable
-    const anyEnglish = voices.find((v) => v.lang.startsWith('en'));
-    if (anyEnglish) return anyEnglish;
-
-    return voices[0] || null;
-  }, []);
-
-  // Speak sentence-by-sentence sequentially
-  const speakSentence = useCallback(
-    (index: number) => {
-      clearTimer();
-      const currentSubtitles = subtitlesRef.current;
-      const currentSpoken = spokenTextsRef.current;
-
-      // When all sentences finish
-      if (index >= currentSubtitles.length) {
+    const advanceFallback = () => {
+      if (isCanceledRef.current) return;
+      const count = subtitlesRef.current.length;
+      let cur = activeIndexRef.current;
+      if (cur < count - 1) {
+        cur += 1;
+        activeIndexRef.current = cur;
+        setActiveSentenceIndex(cur);
+        fallbackTimerRef.current = window.setTimeout(advanceFallback, 3500);
+      } else {
         setIsPlaying(false);
         isPlayingRef.current = false;
-        timerRef.current = setTimeout(() => {
-          if (!isCanceledRef.current) {
-            onCompleteRef.current();
-          }
+        window.setTimeout(() => {
+          if (!isCanceledRef.current) onCompleteRef.current();
         }, 600);
-        return;
       }
+    };
 
-      activeIndexRef.current = index;
-      setActiveSentenceIndex(index);
+    audio.onerror = () => {
+      console.warn(`[CODEXTECH Audio] Audio not found or failed for ${memberId}, using fallback timing.`);
+      fallbackTimerRef.current = window.setTimeout(advanceFallback, 3500);
+    };
 
-      const textToSpeak = currentSpoken[index] || currentSubtitles[index];
-      const hasSpeech = typeof window !== 'undefined' && 'speechSynthesis' in window;
-
-      if (hasSpeech && !isMutedRef.current) {
-        // Clean up previous utterances
-        window.speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        const voice = getGenderVoice(gender);
-        if (voice) {
-          utterance.voice = voice;
-          setSelectedVoiceInfo(`${voice.name} (${gender.toUpperCase()})`);
-        }
-
-        // Natural, clear, and confident speaking cadence
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-
-        let sentenceEnded = false;
-        const advanceToNext = () => {
-          if (sentenceEnded || isCanceledRef.current) return;
-          sentenceEnded = true;
-          // Clean, natural pause between sentences
-          timerRef.current = setTimeout(() => {
-            if (!isCanceledRef.current && isPlayingRef.current) {
-              speakSentence(index + 1);
-            }
-          }, 200);
-        };
-
-        utterance.onend = () => {
-          advanceToNext();
-        };
-
-        utterance.onerror = (e) => {
-          if (e.error === 'not-allowed') {
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          if (!isCanceledRef.current) {
+            setIsPlaying(true);
+            isPlayingRef.current = true;
+            clearFallbackTimer();
+          }
+        })
+        .catch((err) => {
+          if (err.name === 'NotAllowedError') {
             setNeedsUserGesture(true);
             setIsPlaying(false);
             isPlayingRef.current = false;
-          } else if (e.error !== 'canceled') {
-            advanceToNext();
+            fallbackTimerRef.current = window.setTimeout(advanceFallback, 3500);
           }
-        };
+        });
+    }
+  }, [gender, handleTimeUpdate, memberId, resolvedAudioSrc]);
 
-        // Safety fallback timer if utterance stalls
-        const maxDurationMs = Math.max(textToSpeak.split(' ').length * 650, 3600);
-        timerRef.current = setTimeout(() => {
-          if (!sentenceEnded && !isCanceledRef.current && isPlayingRef.current) {
-            advanceToNext();
-          }
-        }, maxDurationMs + 2000);
-
-        // Resume engine in case Chrome suspended it
-        window.speechSynthesis.resume();
-
-        // Speak utterance
-        window.speechSynthesis.speak(utterance);
-        setIsPlaying(true);
-        isPlayingRef.current = true;
-      } else {
-        // Subtitle timing fallback if muted or speech unsupported
-        const words = textToSpeak.split(' ').length;
-        const duration = Math.max(words * 400, 2600);
-
-        timerRef.current = setTimeout(() => {
-          if (!isCanceledRef.current && isPlayingRef.current) {
-            speakSentence(index + 1);
-          }
-        }, duration);
-      }
-    },
-    [gender, getGenderVoice]
-  );
-
-  // Start sequence from sentence 0
-  const startSequence = useCallback(() => {
-    isCanceledRef.current = false;
-    setNeedsUserGesture(false);
-    setIsPlaying(true);
-    isPlayingRef.current = true;
-    speakSentence(0);
-  }, [speakSentence]);
-
-  // Replay complete introduction from beginning
+  // Replay complete introduction from 0.0s
   const replay = useCallback(() => {
     stopAll();
     setTimeout(() => {
@@ -237,51 +204,43 @@ export function useMemberSpeech({
     setIsMuted((prev) => {
       const willBeMuted = !prev;
       isMutedRef.current = willBeMuted;
-
-      if (willBeMuted) {
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-        }
-      } else {
-        if (isPlayingRef.current) {
-          speakSentence(activeIndexRef.current);
-        }
+      if (audioRef.current) {
+        audioRef.current.muted = willBeMuted;
       }
       return willBeMuted;
     });
-  }, [speakSentence]);
+  }, []);
 
   const toggleCaptions = useCallback(() => {
     setCaptionsEnabled((prev) => !prev);
   }, []);
 
-  // Listen for voices changed if Chrome loads them asynchronously
+  // Preload and autoplay lifecycle
   useEffect(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    const handleVoicesChanged = () => {
-      window.speechSynthesis.getVoices();
-    };
-    window.speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
-    return () => {
-      window.speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
-    };
-  }, []);
+    const audio = new Audio(resolvedAudioSrc);
+    audio.preload = 'auto';
+    audioRef.current = audio;
 
-  // ONLY trigger on mount or when memberId changes
-  useEffect(() => {
     if (autoPlay) {
       const initTimer = setTimeout(() => {
         startSequence();
-      }, 120);
+      }, 150);
       return () => {
         clearTimeout(initTimer);
         stopAll();
+        audio.pause();
+        audio.src = '';
+        audioRef.current = null;
       };
     }
+
     return () => {
       stopAll();
+      audio.pause();
+      audio.src = '';
+      audioRef.current = null;
     };
-  }, [memberId]); // Strictly depends only on memberId!
+  }, [resolvedAudioSrc, memberId, autoPlay, startSequence, stopAll]);
 
   return {
     isPlaying,
